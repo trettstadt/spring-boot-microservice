@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: bookingentry
+      author: Tobias Rettstadt
+      changes:
+        - createTable:
+            tableName: booking_entry
+            columns:
+              - column:
+                  name: id
+                  type: bigint

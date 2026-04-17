@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: spring-boot-microservice
+  datasource:
+    url: jdbc:postgresql://localhost:5432/microservicedb
