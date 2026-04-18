@@ -9,4 +9,6 @@ import lombok.Data;
 public class BookingEntryEntity {
     @Id
     private Long id;
+
+    private String description;
 }
