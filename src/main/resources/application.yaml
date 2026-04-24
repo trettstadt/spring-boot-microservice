@@ -2,4 +2,11 @@ spring:
   application:
     name: spring-boot-microservice
   datasource:
-    url: jdbc:postgresql://localhost:5432/microservicedb
+    url: jdbc:postgresql://localhost:5433/microservicedb
+    username: appuser
+    password: apppassword
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/master

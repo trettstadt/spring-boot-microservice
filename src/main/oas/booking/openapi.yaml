@@ -1,0 +1,36 @@
+openapi: "3.0.1"
+
+info:
+  title: Example API for bookings
+  version: "1.0.0"
+
+paths:
+  /bookings:
+    get:
+      description: Returns a list of all bookings.
+      operationId: getBookings
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingList'
+
+components:
+  schemas:
+    Booking:
+      type: object
+      properties:
+        id:
+          type: number
+          format: int64
+        description:
+          type: string
+    BookingList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Booking'
