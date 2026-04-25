@@ -38,6 +38,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security-oauth2-resource-server</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-oauth2-client</artifactId>
+        </dependency>
 
         <!-- REST -->
         <dependency>
@@ -164,12 +168,23 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-oauth2-client-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-jre8-standalone</artifactId>
+            <version>3.0.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -254,9 +269,42 @@
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
                                 <annotationLibrary>none</annotationLibrary>
-                                <apiPackage>de.trettstadt.microservices.adapter.in.rest</apiPackage>
+                                <apiPackage>de.trettstadt.microservices.springbootmicroservice.adapter.in.rest.api</apiPackage>
                                 <documentationProvider>none</documentationProvider>
-                                <modelPackage>de.trettstadt.microservices.adapter.in.rest.model</modelPackage>
+                                <modelPackage>de.trettstadt.microservices.springbootmicroservice.adapter.in.rest.api.model</modelPackage>
+                                <openApiNullable>false</openApiNullable>
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <useJackson3>true</useJackson3>
+                                <useJspecify>true</useJspecify>
+                                <useSpringBoot4>true</useSpringBoot4>
+                                <interfaceOnly>true</interfaceOnly>
+                            </configOptions>
+                            <importMappings>
+                                <importMapping>Nullable=org.jspecify.annotations.Nullable</importMapping>
+                                <importMapping>BigInteger=java.math.BigInteger</importMapping>
+                            </importMappings>
+                            <typeMappings>
+                                number+int64=BigInteger
+                            </typeMappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-rooms-client</id>
+                        <goals><goal>generate</goal></goals>
+                        <configuration>
+                            <inputSpec>${project.baseUri}/src/main/oas/rooms/openapi.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>restclient</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <annotationLibrary>none</annotationLibrary>
+                                <apiPackage>de.trettstadt.microservices.springbootmicroservice.adapter.out.rooms.api</apiPackage>
+                                <documentationProvider>none</documentationProvider>
+                                <invokerPackage>de.trettstadt.microservices.springbootmicroservice.adapter.out.rooms.api</invokerPackage>
+                                <modelPackage>de.trettstadt.microservices.springbootmicroservice.adapter.out.rooms.api.model</modelPackage>
                                 <openApiNullable>false</openApiNullable>
                                 <skipDefaultInterface>true</skipDefaultInterface>
                                 <useJackson3>true</useJackson3>
@@ -425,9 +473,9 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <exclude>de/trettstadt/microservices/adapter/in/rest/ApiUtil.class</exclude>
-                                <exclude>de/trettstadt/microservices/adapter/in/rest/model/*.class</exclude>
-                                <exclude>de/trettstadt/microservices/springbootmicroservice/adapter/out/persistence/BookingEntryEntity.class</exclude>
+                                <!-- exclude generated API classes -->
+                                <exclude>de/trettstadt/microservices/springbootmicroservice/adapter/*/*/api/*.class</exclude>
+                                <exclude>de/trettstadt/microservices/springbootmicroservice/adapter/*/*/api/**/*.class</exclude>
                                 <exclude>de/trettstadt/microservices/springbootmicroservice/SpringBootMicroserviceApplication.class</exclude>
                             </excludes>
                             <rules>

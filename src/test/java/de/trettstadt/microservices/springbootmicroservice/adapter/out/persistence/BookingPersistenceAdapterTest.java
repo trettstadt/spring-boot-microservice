@@ -1,6 +1,6 @@
 package de.trettstadt.microservices.springbootmicroservice.adapter.out.persistence;
 
-import de.trettstadt.microservices.springbootmicroservice.application.port.out.Booking;
+import de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.Booking;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,8 +44,7 @@ class BookingPersistenceAdapterTest {
         List<Booking> result = bookingPersistenceAdapter.findBookings();
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0)).isEqualTo(booking);
+        assertThat(result).containsExactly(booking);
         verify(bookingEntryRepository).findAll();
         verify(bookingPersistenceMapper).toPort(List.of(entity));
     }

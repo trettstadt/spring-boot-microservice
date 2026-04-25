@@ -1,4 +1,4 @@
-package de.trettstadt.microservices.springbootmicroservice.application.port.out;
+package de.trettstadt.microservices.springbootmicroservice.application.port.out.booking;
 
 import java.math.BigInteger;
 

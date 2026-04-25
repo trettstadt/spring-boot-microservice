@@ -1,6 +1,6 @@
 package de.trettstadt.microservices.springbootmicroservice.adapter.out.persistence;
 
-import de.trettstadt.microservices.springbootmicroservice.application.port.out.Booking;
+import de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.Booking;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 class BookingPersistenceMapperTest {
     private final BookingPersistenceMapper mapper = new BookingPersistenceMapperImpl();
@@ -24,9 +25,8 @@ class BookingPersistenceMapperTest {
         List<Booking> result = mapper.toPort(List.of(entity));
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).id()).isEqualTo(BigInteger.ONE);
-        assertThat(result.get(0).description()).isEqualTo("test");
+        assertThat(result).extracting("id", "description")
+                .containsExactly(tuple(BigInteger.ONE, "test"));
     }
 
     @Test

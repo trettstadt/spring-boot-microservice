@@ -1,7 +1,7 @@
 package de.trettstadt.microservices.springbootmicroservice.adapter.out.persistence;
 
-import de.trettstadt.microservices.springbootmicroservice.application.port.out.Booking;
-import de.trettstadt.microservices.springbootmicroservice.application.port.out.FindBookings;
+import de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.Booking;
+import de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.FindBookings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

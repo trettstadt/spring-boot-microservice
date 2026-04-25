@@ -1,7 +1,7 @@
 package de.trettstadt.microservices.springbootmicroservice.application.domain.service;
 
 import de.trettstadt.microservices.springbootmicroservice.application.domain.model.Booking;
-import de.trettstadt.microservices.springbootmicroservice.application.port.out.FindBookings;
+import de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.FindBookings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +34,7 @@ class BookingServiceTest {
     @Test
     void shouldReturnBookings() {
         // given
-        de.trettstadt.microservices.springbootmicroservice.application.port.out.Booking outBooking = new de.trettstadt.microservices.springbootmicroservice.application.port.out.Booking(BigInteger.ONE, "test booking");
+        de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.Booking outBooking = new de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.Booking(BigInteger.ONE, "test booking");
         Booking domainBooking = new Booking(BigInteger.ONE, "test booking");
         de.trettstadt.microservices.springbootmicroservice.application.port.in.Booking useCaseBooking = new de.trettstadt.microservices.springbootmicroservice.application.port.in.Booking(BigInteger.ONE, "test booking");
 
@@ -46,8 +46,7 @@ class BookingServiceTest {
         List<de.trettstadt.microservices.springbootmicroservice.application.port.in.Booking> result = bookingService.getBookings();
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0)).isEqualTo(useCaseBooking);
+        assertThat(result).containsExactly(useCaseBooking);
         verify(findBookings).findBookings();
         verify(findBookingsMapper).fromPort(List.of(outBooking));
         verify(listBookingsUseCaseMapper).toPort(List.of(domainBooking));

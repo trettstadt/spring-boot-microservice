@@ -2,7 +2,7 @@ package de.trettstadt.microservices.springbootmicroservice.application.domain.se
 
 import de.trettstadt.microservices.springbootmicroservice.application.port.in.Booking;
 import de.trettstadt.microservices.springbootmicroservice.application.port.in.ListBookingsUseCase;
-import de.trettstadt.microservices.springbootmicroservice.application.port.out.FindBookings;
+import de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.FindBookings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

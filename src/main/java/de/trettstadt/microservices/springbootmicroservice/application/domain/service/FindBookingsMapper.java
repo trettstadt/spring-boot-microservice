@@ -1,6 +1,6 @@
 package de.trettstadt.microservices.springbootmicroservice.application.domain.service;
 
-import de.trettstadt.microservices.springbootmicroservice.application.port.out.Booking;
+import de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.Booking;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 

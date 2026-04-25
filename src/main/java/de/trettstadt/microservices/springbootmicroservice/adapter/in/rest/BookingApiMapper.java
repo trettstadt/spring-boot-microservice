@@ -1,6 +1,6 @@
 package de.trettstadt.microservices.springbootmicroservice.adapter.in.rest;
 
-import de.trettstadt.microservices.adapter.in.rest.model.Booking;
+import de.trettstadt.microservices.springbootmicroservice.adapter.in.rest.api.model.Booking;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 

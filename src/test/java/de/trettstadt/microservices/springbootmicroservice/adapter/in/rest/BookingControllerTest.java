@@ -1,6 +1,6 @@
 package de.trettstadt.microservices.springbootmicroservice.adapter.in.rest;
 
-import de.trettstadt.microservices.adapter.in.rest.model.BookingList;
+import de.trettstadt.microservices.springbootmicroservice.adapter.in.rest.api.model.BookingList;
 import de.trettstadt.microservices.springbootmicroservice.application.port.in.Booking;
 import de.trettstadt.microservices.springbootmicroservice.application.port.in.ListBookingsUseCase;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +14,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,8 +36,8 @@ class BookingControllerTest {
     void shouldReturnBookingList() {
         // given
         Booking useCaseBooking = new Booking(BigInteger.ONE, "test");
-        de.trettstadt.microservices.adapter.in.rest.model.Booking apiBooking =
-                new de.trettstadt.microservices.adapter.in.rest.model.Booking()
+        de.trettstadt.microservices.springbootmicroservice.adapter.in.rest.api.model.Booking apiBooking =
+                new de.trettstadt.microservices.springbootmicroservice.adapter.in.rest.api.model.Booking()
                         .id(BigInteger.ONE)
                         .description("test");
 
@@ -47,10 +48,8 @@ class BookingControllerTest {
         ResponseEntity<BookingList> result = bookingController.getBookings();
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody().getData()).hasSize(1);
-        assertThat(result.getBody().getData().get(0).getDescription()).isEqualTo("test");
+        assertThat(result.getBody().getData()).extracting("id", "description")
+                .containsExactly(tuple(BigInteger.ONE, "test"));
         verify(listBookingsUseCase).getBookings();
         verify(bookingApiMapper).toApi(List.of(useCaseBooking));
     }

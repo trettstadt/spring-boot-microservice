@@ -1,7 +1,7 @@
 package de.trettstadt.microservices.springbootmicroservice.adapter.in.rest;
 
-import de.trettstadt.microservices.adapter.in.rest.BookingsApi;
-import de.trettstadt.microservices.adapter.in.rest.model.BookingList;
+import de.trettstadt.microservices.springbootmicroservice.adapter.in.rest.api.BookingsApi;
+import de.trettstadt.microservices.springbootmicroservice.adapter.in.rest.api.model.BookingList;
 import de.trettstadt.microservices.springbootmicroservice.application.port.in.ListBookingsUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

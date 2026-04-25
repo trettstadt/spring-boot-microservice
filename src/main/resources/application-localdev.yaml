@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/microservicedb
+    username: appuser
+    password: apppassword
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/master
+      client:
+        registration:
+          rooms:
+            provider: keycloak
+            client-id: rooms
+            client-secret: secret
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8180/realms/master

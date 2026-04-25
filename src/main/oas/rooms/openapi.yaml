@@ -1,0 +1,42 @@
+openapi: "3.0.1"
+
+info:
+  title: Example API for rooms
+  version: "1.0.0"
+
+tags:
+  - name: room
+    description: API for rooms
+
+paths:
+  /rooms:
+    get:
+      description: Returns a list of all rooms.
+      operationId: getRooms
+      tags:
+        - room
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomList'
+
+components:
+  schemas:
+    Room:
+      type: object
+      properties:
+        id:
+          type: number
+          format: int64
+        description:
+          type: string
+    RoomList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Room'
