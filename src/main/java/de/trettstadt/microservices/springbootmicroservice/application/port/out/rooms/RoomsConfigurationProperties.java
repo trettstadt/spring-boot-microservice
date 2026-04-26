@@ -4,9 +4,13 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * Configuration properties for the Rooms API client.
+ */
 @Component
 @ConfigurationProperties(prefix = "rooms")
 @Data
 public class RoomsConfigurationProperties {
-    private String basePath;
+
+  private String basePath;
 }

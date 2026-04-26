@@ -1,40 +1,42 @@
 package de.trettstadt.microservices.springbootmicroservice.application.domain.service;
 
-import de.trettstadt.microservices.springbootmicroservice.application.domain.model.Booking;
-import org.junit.jupiter.api.Test;
-
-import java.math.BigInteger;
-import java.util.Collections;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
+import de.trettstadt.microservices.springbootmicroservice.application.domain.model.BookingDomain;
+import de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.BookingOutPort;
+import java.math.BigInteger;
+import java.util.Collections;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+
 class FindBookingsMapperTest {
-    private final FindBookingsMapper mapper = new FindBookingsMapperImpl();
 
-    @Test
-    void shouldMapFromPort() {
-        // given
-        de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.Booking outBooking = new de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.Booking(BigInteger.ONE, "test");
+  private final FindBookingsMapper mapper = new FindBookingsMapperImpl();
 
-        // when
-        List<Booking> result = mapper.fromPort(List.of(outBooking));
+  @Test
+  void shouldMapFromPort() {
+    // given
+    BookingOutPort outBooking = new BookingOutPort(
+        BigInteger.ONE, "test");
 
-        // then
-        assertThat(result).extracting("id", "description")
-                .containsExactly(tuple(BigInteger.ONE, "test"));
-    }
+    // when
+    List<BookingDomain> result = mapper.fromPort(List.of(outBooking));
 
-    @Test
-    void shouldMapEmptyList() {
-        // given
-        List<de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.Booking> input = Collections.emptyList();
+    // then
+    assertThat(result).extracting("id", "description")
+        .containsExactly(tuple(BigInteger.ONE, "test"));
+  }
 
-        // when
-        List<Booking> result = mapper.fromPort(input);
+  @Test
+  void shouldMapEmptyList() {
+    // given
+    List<BookingOutPort> input = Collections.emptyList();
 
-        // then
-        assertThat(result).isEmpty();
-    }
+    // when
+    List<BookingDomain> result = mapper.fromPort(input);
+
+    // then
+    assertThat(result).isEmpty();
+  }
 }

@@ -1,54 +1,60 @@
 package de.trettstadt.microservices.springbootmicroservice.application.domain.service;
 
-import de.trettstadt.microservices.springbootmicroservice.application.domain.model.Booking;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import de.trettstadt.microservices.springbootmicroservice.application.domain.model.BookingDomain;
+import de.trettstadt.microservices.springbootmicroservice.application.port.in.BookingInPort;
+import de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.BookingOutPort;
 import de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.FindBookings;
+import java.math.BigInteger;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigInteger;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class BookingServiceTest {
-    @Mock
-    private FindBookings findBookings;
-    @Mock
-    private FindBookingsMapper findBookingsMapper;
-    @Mock
-    private ListBookingsUseCaseMapper listBookingsUseCaseMapper;
 
-    private BookingService bookingService;
+  @Mock
+  private FindBookings findBookings;
+  @Mock
+  private FindBookingsMapper findBookingsMapper;
+  @Mock
+  private ListBookingsUseCaseMapper listBookingsUseCaseMapper;
 
-    @BeforeEach
-    void setUp() {
-        bookingService = new BookingService(findBookings, findBookingsMapper, listBookingsUseCaseMapper);
-    }
+  private BookingService bookingService;
 
-    @Test
-    void shouldReturnBookings() {
-        // given
-        de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.Booking outBooking = new de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.Booking(BigInteger.ONE, "test booking");
-        Booking domainBooking = new Booking(BigInteger.ONE, "test booking");
-        de.trettstadt.microservices.springbootmicroservice.application.port.in.Booking useCaseBooking = new de.trettstadt.microservices.springbootmicroservice.application.port.in.Booking(BigInteger.ONE, "test booking");
+  @BeforeEach
+  void setUp() {
+    bookingService = new BookingService(findBookings, findBookingsMapper,
+        listBookingsUseCaseMapper);
+  }
 
-        when(findBookings.findBookings()).thenReturn(List.of(outBooking));
-        when(findBookingsMapper.fromPort(List.of(outBooking))).thenReturn(List.of(domainBooking));
-        when(listBookingsUseCaseMapper.toPort(List.of(domainBooking))).thenReturn(List.of(useCaseBooking));
+  @Test
+  void shouldReturnBookings() {
+    // given
+    BookingOutPort outBooking = new BookingOutPort(
+        BigInteger.ONE, "test booking");
+    BookingDomain domainBooking = new BookingDomain(BigInteger.ONE, "test booking");
+    BookingInPort useCaseBooking = new BookingInPort(
+        BigInteger.ONE, "test booking");
 
-        // when
-        List<de.trettstadt.microservices.springbootmicroservice.application.port.in.Booking> result = bookingService.getBookings();
+    when(findBookings.findBookings()).thenReturn(List.of(outBooking));
+    when(findBookingsMapper.fromPort(List.of(outBooking))).thenReturn(List.of(domainBooking));
+    when(listBookingsUseCaseMapper.toPort(List.of(domainBooking))).thenReturn(
+        List.of(useCaseBooking));
 
-        // then
-        assertThat(result).containsExactly(useCaseBooking);
-        verify(findBookings).findBookings();
-        verify(findBookingsMapper).fromPort(List.of(outBooking));
-        verify(listBookingsUseCaseMapper).toPort(List.of(domainBooking));
-    }
+    // when
+    List<BookingInPort> result = bookingService.getBookings();
+
+    // then
+    assertThat(result).containsExactly(useCaseBooking);
+    verify(findBookings).findBookings();
+    verify(findBookingsMapper).fromPort(List.of(outBooking));
+    verify(listBookingsUseCaseMapper).toPort(List.of(domainBooking));
+  }
 }

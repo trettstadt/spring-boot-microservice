@@ -1,42 +1,42 @@
 package de.trettstadt.microservices.springbootmicroservice.adapter.out.rooms;
 
-import de.trettstadt.microservices.springbootmicroservice.application.port.out.rooms.Room;
-import org.junit.jupiter.api.Test;
-
-import java.math.BigInteger;
-import java.util.Collections;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
+import de.trettstadt.microservices.springbootmicroservice.application.port.out.rooms.RoomOutPort;
+import java.math.BigInteger;
+import java.util.Collections;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+
 class RoomsMapperTest {
-    private final RoomsMapper mapper = new RoomsMapperImpl();
 
-    @Test
-    void shouldMapToPort() {
-        // given
-        de.trettstadt.microservices.springbootmicroservice.adapter.out.rooms.api.model.Room externalRoom = new de.trettstadt.microservices.springbootmicroservice.adapter.out.rooms.api.model.Room();
-        externalRoom.setId(BigInteger.ONE);
-        externalRoom.setDescription("Test Room");
+  private final RoomsMapper mapper = new RoomsMapperImpl();
 
-        // when
-        List<Room> result = mapper.toPort(List.of(externalRoom));
+  @Test
+  void shouldMapToPort() {
+    // given
+    de.trettstadt.microservices.springbootmicroservice.adapter.out.rooms.api.model.Room externalRoom = new de.trettstadt.microservices.springbootmicroservice.adapter.out.rooms.api.model.Room();
+    externalRoom.setId(BigInteger.ONE);
+    externalRoom.setDescription("Test Room");
 
-        // then
-        assertThat(result).extracting("id", "description")
-                .containsExactly(tuple(BigInteger.ONE, "Test Room"));
-    }
+    // when
+    List<RoomOutPort> result = mapper.toPort(List.of(externalRoom));
 
-    @Test
-    void shouldMapEmptyList() {
-        // given
-        List<de.trettstadt.microservices.springbootmicroservice.adapter.out.rooms.api.model.Room> input = Collections.emptyList();
+    // then
+    assertThat(result).extracting("id", "description")
+        .containsExactly(tuple(BigInteger.ONE, "Test Room"));
+  }
 
-        // when
-        List<Room> result = mapper.toPort(input);
+  @Test
+  void shouldMapEmptyList() {
+    // given
+    List<de.trettstadt.microservices.springbootmicroservice.adapter.out.rooms.api.model.Room> input = Collections.emptyList();
 
-        // then
-        assertThat(result).isEmpty();
-    }
+    // when
+    List<RoomOutPort> result = mapper.toPort(input);
+
+    // then
+    assertThat(result).isEmpty();
+  }
 }

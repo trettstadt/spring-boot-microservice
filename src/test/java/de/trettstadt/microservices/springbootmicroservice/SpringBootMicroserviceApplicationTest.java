@@ -9,10 +9,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 @SpringBootTest
 @Tag("integration")
 class SpringBootMicroserviceApplicationTest {
-    @MockitoBean
-    private OAuth2AuthorizedClientManager authorizedClientManager;
 
-    @Test
-    void contextLoads() {
-    }
+  @MockitoBean
+  private OAuth2AuthorizedClientManager authorizedClientManager;
+
+  @Test
+  void contextLoads() {
+  }
 }

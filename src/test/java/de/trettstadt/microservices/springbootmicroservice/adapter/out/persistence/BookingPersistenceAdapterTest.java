@@ -1,51 +1,52 @@
 package de.trettstadt.microservices.springbootmicroservice.adapter.out.persistence;
 
-import de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.Booking;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import de.trettstadt.microservices.springbootmicroservice.application.port.out.booking.BookingOutPort;
+import java.math.BigInteger;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigInteger;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class BookingPersistenceAdapterTest {
-    @Mock
-    private BookingPersistenceMapper bookingPersistenceMapper;
-    @Mock
-    private BookingEntryRepository bookingEntryRepository;
 
-    private BookingPersistenceAdapter bookingPersistenceAdapter;
+  @Mock
+  private BookingPersistenceMapper bookingPersistenceMapper;
+  @Mock
+  private BookingEntryRepository bookingEntryRepository;
 
-    @BeforeEach
-    void setUp() {
-        bookingPersistenceAdapter = new BookingPersistenceAdapter(bookingPersistenceMapper, bookingEntryRepository);
-    }
+  private BookingPersistenceAdapter bookingPersistenceAdapter;
 
-    @Test
-    void shouldReturnBookings() {
-        // given
-        BookingEntryEntity entity = BookingEntryEntity.builder()
-                .id(BigInteger.ONE)
-                .description("test")
-                .build();
-        Booking booking = new Booking(BigInteger.ONE, "test");
+  @BeforeEach
+  void setUp() {
+    bookingPersistenceAdapter = new BookingPersistenceAdapter(bookingPersistenceMapper,
+        bookingEntryRepository);
+  }
 
-        when(bookingEntryRepository.findAll()).thenReturn(List.of(entity));
-        when(bookingPersistenceMapper.toPort(List.of(entity))).thenReturn(List.of(booking));
+  @Test
+  void shouldReturnBookings() {
+    // given
+    BookingEntryEntity entity = BookingEntryEntity.builder()
+        .id(BigInteger.ONE)
+        .description("test")
+        .build();
+    BookingOutPort bookingOutPort = new BookingOutPort(BigInteger.ONE, "test");
 
-        // when
-        List<Booking> result = bookingPersistenceAdapter.findBookings();
+    when(bookingEntryRepository.findAll()).thenReturn(List.of(entity));
+    when(bookingPersistenceMapper.toPort(List.of(entity))).thenReturn(List.of(bookingOutPort));
 
-        // then
-        assertThat(result).containsExactly(booking);
-        verify(bookingEntryRepository).findAll();
-        verify(bookingPersistenceMapper).toPort(List.of(entity));
-    }
+    // when
+    List<BookingOutPort> result = bookingPersistenceAdapter.findBookings();
+
+    // then
+    assertThat(result).containsExactly(bookingOutPort);
+    verify(bookingEntryRepository).findAll();
+    verify(bookingPersistenceMapper).toPort(List.of(entity));
+  }
 }
