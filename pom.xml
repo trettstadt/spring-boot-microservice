@@ -522,6 +522,7 @@
           <configLocation>
             google_checks.xml
           </configLocation>
+          <excludeGeneratedSources>true</excludeGeneratedSources>
           <violationSeverity>warning</violationSeverity>
         </configuration>
         <dependencies>
