@@ -533,6 +533,24 @@
           </dependency>
         </dependencies>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.28.0</version>
+        <configuration>
+          <excludeRoots>
+            <excludeRoot>target/generated-sources/openapi/src/main/java</excludeRoot>
+          </excludeRoots>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>4.9.8.3</version>
+        <configuration>
+          <excludeFilterFile>${project.basedir}/src/main/build/spotbugs-ignore.xml</excludeFilterFile>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
