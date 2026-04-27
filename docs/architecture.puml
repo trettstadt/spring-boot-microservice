@@ -1,0 +1,32 @@
+@startuml
+!include <C4/C4_Container>
+
+LAYOUT_WITH_LEGEND()
+
+title Container Diagram - Booking Microservice
+
+Person(client, "Client", "External client with JWT token")
+
+System_Boundary(microservice, "spring-boot-microservice") {
+    Container(bookingController, "BookingController", "Spring REST Controller", "Exposes booking REST API, secured with OAuth2 JWT")
+    Container(bookingService, "BookingService", "Domain Service", "Core booking logic, orchestrates use cases")
+    Container(bookingPersistenceAdapter, "BookingPersistenceAdapter", "JPA Adapter", "Implements BookingOutPort, persists to PostgreSQL via JPA")
+
+    ContainerDb(postgres, "PostgreSQL", "Database", "Booking persistence")
+}
+
+System_Ext(oauthProvider, "OAuth2/OIDC Provider", "Issues and validates JWT tokens")
+System_Ext(collector, "OpenTelemetry Collector")
+
+Rel(client, bookingController, "GET /bookings", "HTTPS + JWT")
+Rel(bookingController, bookingService, "Uses", "Input Port")
+Rel(bookingService, bookingPersistenceAdapter, "Uses", "Output Port")
+Rel(bookingPersistenceAdapter, postgres, "Reads/Writes", "JDBC")
+
+Rel(oauthProvider, client, "Issues token")
+Rel(client, oauthProvider, "Validates token")
+
+Rel(microservice, collector, "Emits traces/metrics")
+
+SHOW_LEGEND()
+@enduml
