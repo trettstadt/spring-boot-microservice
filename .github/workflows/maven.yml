@@ -16,7 +16,15 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     permissions:
       packages: write
     steps:
@@ -33,17 +41,25 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build and push Docker image (amd64)
+    - name: Build and push Docker image (${{ matrix.arch }})
       run: |
         mvn -B spring-boot:build-image \
-          -Dspring-boot.build-image.imageName=ghcr.io/${{github.repository}}:${{github.sha}}-amd64 \
-          -Dspring-boot.build-image.publish=true
-    - name: Build and push Docker image (arm64)
-      run: |
-        mvn -B spring-boot:build-image \
-          -Dspring-boot.build-image.imageName=ghcr.io/${{github.repository}}:${{github.sha}}-arm64 \
-          -Dspring-boot.build-image.publish=true \
-          -Dspring-boot.build-image.environment.BP_OCI_ARCHITECTURE=arm64
+          -DskipTests \
+          -Dspring-boot.build-image.imageName=ghcr.io/${{github.repository}}:${{github.sha}}-${{matrix.arch}}
+        docker push ghcr.io/${{github.repository}}:${{github.sha}}-${{matrix.arch}}
+
+  manifest:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     - name: Create and push multi-arch manifest
       run: |
         docker manifest create ghcr.io/${{github.repository}}:${{github.sha}} \
