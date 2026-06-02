@@ -4,6 +4,7 @@ import de.trettstadt.microservices.springbootmicroservice.adapter.in.rest.api.Bo
 import de.trettstadt.microservices.springbootmicroservice.adapter.in.rest.api.model.BookingList;
 import de.trettstadt.microservices.springbootmicroservice.application.port.in.ListBookingsUseCase;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * REST controller implementing the {@link BookingsApi} for handling booking-related HTTP requests.
  */
 @RestController
+@Slf4j
 public class BookingController implements BookingsApi {
 
   private final ListBookingsUseCase listBookingsUseCase;
@@ -32,6 +34,7 @@ public class BookingController implements BookingsApi {
   @Override
   @PreAuthorize("hasAuthority('SCOPE_bookings')")
   public ResponseEntity<BookingList> getBookings() {
+    log.info("getBookings");
     return ResponseEntity.of(Optional.of(
         new BookingList().data(bookingApiMapper.toApi(listBookingsUseCase.getBookings()))));
   }
