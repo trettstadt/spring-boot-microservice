@@ -17,3 +17,20 @@ spring:
         provider:
           keycloak:
             issuer-uri: http://localhost:8180/realms/master
+
+management:
+  prometheus:
+    metrics:
+      export:
+        enabled: false
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          transport: grpc
+          endpoint: http://localhost:4317
+    logging:
+      export:
+        otlp:
+          transport: grpc
+          endpoint: http://localhost:4317

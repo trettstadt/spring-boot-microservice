@@ -25,19 +25,17 @@ services:
     depends_on:
       - postgres
 
-  otel-collector:
-    image: otel/opentelemetry-collector
-    volumes:
-      - ./otel-collector-config.yaml:/etc/otelcol/config.yaml
-      - ./otel.json:/otel.json
+  lgtm:
+    image: grafana/otel-lgtm:latest
+    pid: "host"
+    privileged: true
     ports:
-      - "1888:1888" # pprof extension
-      - "8888:8888" # Prometheus metrics exposed by the Collector
-      - "8889:8889" # Prometheus exporter metrics
-      - "13133:13133" # health_check extension
-      - "4317:4317" # OTLP gRPC receiver
-      - "4318:4318" # OTLP http receiver
-      - "55679:55679" # zpages extension
+      - "3000:3000"     # Grafana
+      - "4317:4317"     # OTLP gRPC receiver
+      - "4318:4318"     # OTLP HTTP receiver
+      - "9090:9090"     # Prometheus web UI
+      - "3200:3200"     # Tempo
+      - "3100:3100"     # Loki
 
 volumes:
   postgres_data:
