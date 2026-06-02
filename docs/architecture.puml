@@ -16,7 +16,7 @@ System_Boundary(microservice, "spring-boot-microservice") {
 }
 
 System_Ext(oauthProvider, "OAuth2/OIDC Provider", "Issues and validates JWT tokens")
-System_Ext(collector, "OpenTelemetry Collector")
+System_Ext(collector, "Observability Suite (Grafana, Prometheus, Tempo")
 
 Rel(client, bookingController, "GET /bookings", "HTTPS + JWT")
 Rel(bookingController, bookingService, "Uses", "Input Port")
