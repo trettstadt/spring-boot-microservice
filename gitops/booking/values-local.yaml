@@ -1,0 +1,71 @@
+spring:
+  profiles:
+    active: ""
+
+database:
+  url: jdbc:postgresql://host.docker.internal:5433/microservicedb
+  username: appuser
+
+oauth2:
+  issuerUri: http://host.docker.internal:8180/realms/master
+  clientId: rooms
+  clientSecret: secret
+
+actuator:
+  prometheus:
+    metrics:
+      export:
+        enabled: false
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          transport: grpc
+          endpoint: http://host.docker.internal:4317
+    logging:
+      export:
+        otlp:
+          transport: grpc
+          endpoint: http://host.docker.internal:4317
+    metrics:
+      export:
+        enabled: true
+        url: http://host.docker.internal:4318/v1/metrics
+
+externalSecrets:
+  enabled: true
+  store:
+    spec:
+      provider:
+        fake:
+          data:
+            - key: /secret/database
+              value: '{"password":"apppassword"}'
+  secret:
+    remoteRef:
+      key: /secret/database
+      property: password
+
+resources:
+  limits:
+    cpu: 1
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+service:
+  port: 8080
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health
+    port: http
+readinessProbe:
+  httpGet:
+    path: /actuator/health
+    port: http
+
+image:
+  repository: ghcr.io/trettstadt/spring-boot-microservice
+  tag: 60a58d0a9b3d43baae39a51048ccce881dac6038
+  pullPolicy: IfNotPresent

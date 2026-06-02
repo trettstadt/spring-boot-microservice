@@ -1,0 +1,348 @@
+# Default values for booking.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# SECTION: General Kubernetes configuration
+
+# This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+replicaCount: 1
+
+# This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
+image:
+  repository: "ghcr.io/trettstadt/spring-boot-microservice"
+  # This sets the pull policy for images.
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "824127f49d1f04780d30c073728a7b6ba06396a9"
+
+# This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-repository/
+imagePullSecrets: []
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  # Specifies whether a service account should be created.
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: false
+  # Annotations to add to the service account.
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+# Priority class name for the pod. Set to a production-high priority class for critical services.
+priorityClassName: ""
+# Termination grace period in seconds. Should accommodate max request duration + preStop sleep.
+terminationGracePeriodSeconds: 60
+
+# This is for setting Kubernetes Annotations to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+podAnnotations: {}
+# This is for setting Kubernetes Labels to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext:
+   capabilities:
+     drop:
+     - ALL
+   readOnlyRootFilesystem: true
+   runAsNonRoot: true
+   runAsUser: 1000
+
+# This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
+service:
+  # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+  type: ClusterIP
+  # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+  port: 80
+  # Annotations for the Service resource.
+  # Uncomment to enable Prometheus scraping via annotations (requires Prometheus server configured for annotation-based discovery):
+  # annotations:
+  #   prometheus.io/scrape: "true"
+  #   prometheus.io/path: /actuator/prometheus
+  #   prometheus.io/port: "8080"
+  annotations: {}
+
+# This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+    # - secretName: chart-example-tls
+    #   hosts:
+    #     - chart-example.local
+
+# -- Expose the service via gateway-api HTTPRoute
+# Requires Gateway API resources and suitable controller installed within the cluster
+# (see: https://gateway-api.sigs.k8s.io/guides/)
+httpRoute:
+  # HTTPRoute enabled.
+  enabled: false
+  # HTTPRoute annotations.
+  annotations: {}
+  # Which Gateways this Route is attached to.
+  parentRefs:
+  - name: gateway
+    sectionName: http
+    # namespace: default
+  # Hostnames matching HTTP header.
+  hostnames:
+  - chart-example.local
+  # List of rules and filters applied.
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /headers
+  #   filters:
+  #   - type: RequestHeaderModifier
+  #     requestHeaderModifier:
+  #       set:
+  #       - name: My-Overwrite-Header
+  #         value: this-is-the-only-value
+  #       remove:
+  #       - User-Agent
+  # - matches:
+  #   - path:
+  #       type: PathPrefix
+  #       value: /echo
+  #     headers:
+  #     - name: version
+  #       value: v2
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: http
+  periodSeconds: 10
+  failureThreshold: 30
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: http
+  periodSeconds: 10
+  failureThreshold: 3
+
+# Startup probe for slow-initializing apps (JVM/Spring Boot). Uses a high failure threshold
+# to prevent premature restarts during cold starts, while allowing tighter liveness checks
+# once the app is running.
+startupProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: http
+  periodSeconds: 5
+  failureThreshold: 60
+
+# Lifecycle hooks for graceful shutdown.
+# The preStop sleep gives the endpoint controller time to remove the pod from Service endpoints
+# before SIGTERM is sent, preventing dropped in-flight requests during rolling updates.
+lifecycle:
+  preStop:
+    exec:
+      command: ["/bin/sh", "-c", "sleep 10"]
+
+# This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes:
+  - name: tmp
+    emptyDir: {}
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts:
+  - name: tmp
+    mountPath: /tmp
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Distribute pods across topology domains (e.g., nodes, zones) for high availability.
+# Uncomment to spread replicas across nodes:
+# topologySpreadConstraints:
+#   - maxSkew: 1
+#     topologyKey: kubernetes.io/hostname
+#     whenUnsatisfiable: DoNotSchedule
+topologySpreadConstraints: []
+
+# SECTION: External Secrets Operator integration
+# Requires the External Secrets Operator to be installed in the cluster.
+# See: https://external-secrets.io/latest/
+externalSecrets:
+  # -- Enable External Secrets Operator integration.
+  # When enabled, creates a SecretStore and ExternalSecret to manage the DB password
+  # from an external keystore. When disabled, no secret volume is mounted and the
+  # ConfigMap's spring.config.import falls back to optional:file behavior.
+  enabled: false
+
+  # -- SecretStore / ClusterSecretStore configuration.
+  store:
+    # -- "SecretStore" (namespaced) or "ClusterSecretStore" (cluster-wide).
+    type: SecretStore
+    # -- Name override. Defaults to "{fullname}".
+    name: ""
+    # -- Full provider spec. Provider-specific configuration passed as-is.
+    # See https://external-secrets.io/latest/provider/ for available providers.
+    # Example for AWS Secrets Manager:
+    # spec:
+    #   provider:
+    #     aws:
+    #       service: SecretsManager
+    #       region: us-east-1
+    #       auth:
+    #         secretRef:
+    #           accessKeyIDSecretRef:
+    #             name: aws-creds
+    #             key: access-key
+    spec:
+      provider: {}
+        # Example for fake provider (local dev):
+        # fake:
+        #   data:
+        #     - key: /secret/database
+        #       value: '{"password":"apppassword"}'
+        #       version: v1
+
+  # -- ExternalSecret configuration.
+  secret:
+    # -- Name override. Defaults to "{fullname}-db-secret".
+    name: ""
+    # -- How often to refresh the secret from the external store.
+    refreshInterval: 1h
+    # -- Deletion policy: "Delete", "Retain", or "Merge".
+    deletionPolicy: Delete
+    # -- Creation policy: "Owner" (ESO manages the entire secret) or "Merge" or "None".
+    creationPolicy: Owner
+    # -- Remote reference in the external store.
+    # The store must return a JSON object with a "password" property.
+    remoteRef:
+      # -- Path/key in the external store.
+      key: /secret/database
+      # -- Property within the value (e.g. JSON key "password").
+      property: password
+
+# SECTION: Application configuration
+
+# Spring profile to activate. Leave empty to rely on the SPRING_PROFILES_ACTIVE env var.
+# Set to "localdev" for local development, "prod" for production.
+spring:
+  profiles:
+    active: ""
+
+# Actuator configuration for health probes and metrics exposition.
+actuator:
+  health:
+    # Enable liveness and readiness health group endpoints.
+    # Required for /actuator/health/liveness and /actuator/health/readiness probes.
+    probesEnabled: true
+  endpoints:
+    exposure:
+      # Comma-separated list of actuator endpoints to expose via HTTP.
+      # "health" is always needed for probes; "prometheus" for metrics scraping.
+      include: "health,prometheus"
+
+  # Prometheus metrics scraping — controls whether Micrometer exports metrics
+  # to the /actuator/prometheus endpoint. Set to false to disable.
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+  # OpenTelemetry export for tracing, logging, and metrics. Set the OTLP
+  # endpoint to your collector (e.g., Grafana Tempo, Jaeger, SigNoz).
+  # Leave endpoint/url empty to disable.
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          transport: grpc
+          endpoint: ""
+    logging:
+      export:
+        otlp:
+          transport: grpc
+          endpoint: ""
+    metrics:
+      export:
+        enabled: true
+        url: ""
+
+# PodDisruptionBudget ensures minimum availability during voluntary disruptions
+# (node drains, cluster upgrades). Enable in production with replicaCount > 1.
+podDisruptionBudget:
+  enabled: false
+  maxUnavailable: 1
+
+# NetworkPolicy for pod-level network isolation.
+# When enabled, restricts ingress and egress traffic to the specified rules.
+# Disabled by default — enable and configure per-environment.
+networkPolicy:
+  enabled: false
+  # Ingress rules: which sources can reach this service.
+  ingress:
+    - from: []
+  # Egress rules: which destinations this service can reach.
+  egress:
+    - to: []
+    # Allow DNS resolution (port 53 UDP).
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - port: 53
+          protocol: UDP
+
+# Prometheus ServiceMonitor for the Prometheus Operator.
+# Requires the monitoring.coreos.com CRDs to be installed in the cluster.
+serviceMonitor:
+  enabled: false
+  interval: 30s
+  scrapeTimeout: 10s
+  # Metrics endpoint path
+  path: /actuator/prometheus
+  # Additional labels to attach to the ServiceMonitor (e.g., release: prometheus)
+  additionalLabels: {}
+
+database:
+  url: jdbc://postgresql/server/booking
+  username: booking
+
+oauth2:
+  issuerUri: http://localhost:8180/realms/master
+  clientId: rooms
+  clientSecret: secret
