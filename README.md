@@ -1,4 +1,5 @@
 [![Java CI with Maven](https://github.com/trettstadt/spring-boot-microservice/actions/workflows/maven.yml/badge.svg)](https://github.com/trettstadt/spring-boot-microservice/actions/workflows/maven.yml)
+[![Dependabot](https://img.shields.io/github/dependabot-alerts/trettstadt/spring-boot-microservice)](https://github.com/trettstadt/spring-boot-microservice/security/dependabot)
 
 # Booking Microservice
 
