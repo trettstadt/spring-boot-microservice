@@ -171,8 +171,13 @@ When ESO is disabled (default), no secret volume is mounted and the ConfigMap's
 
 ## Key Design Decisions
 
-| ADR                                                       | Decision                                    |
-|-----------------------------------------------------------|---------------------------------------------|
-| [0002](docs/adr/0002-use-java-as-programming-language.md) | Java as programming language                |
-| [0003](docs/adr/0003-use-spring-boot-as-framework.md)     | Spring Boot as framework                    |
-| [0004](docs/adr/0004-ports-and-adapters-architecture.md)  | Ports and Adapters (Hexagonal) architecture |
+| ADR                                                       | Decision                                                    |
+|-----------------------------------------------------------|-------------------------------------------------------------|
+| [0002](docs/adr/0002-use-java-as-programming-language.md) | Java as programming language                                |
+| [0003](docs/adr/0003-use-spring-boot-as-framework.md)     | Spring Boot as framework                                    |
+| [0004](docs/adr/0004-ports-and-adapters-architecture.md)  | Ports and Adapters (Hexagonal) architecture                 |
+| [0005](docs/adr/0005-kubernetes-native-configuration-with-configmap-and-secret.md) | ConfigMap + Secret with application.yaml for config |
+| [0006](docs/adr/0006-openapi-first-api-design-with-code-generation.md) | OpenAPI-first API design with code generation     |
+| [0007](docs/adr/0007-external-secrets-operator-for-credential-management.md) | External Secrets Operator for credential management |
+| [0008](docs/adr/0008-opentelemetry-for-observability.md)  | OpenTelemetry for observability                             |
+| [0009](docs/adr/0009-mapstruct-for-port-adapter-boundary-mapping.md) | MapStruct for port-adapter boundary mapping        |
