@@ -29,8 +29,3 @@ management:
         otlp:
           transport: grpc
           endpoint: http://localhost:4317
-    logging:
-      export:
-        otlp:
-          transport: grpc
-          endpoint: http://localhost:4317
