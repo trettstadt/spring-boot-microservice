@@ -51,6 +51,14 @@ resources:
 service:
   port: 8080
 
+# Ermöglicht K8s-Pods, den Docker-Host (Keycloak, PostgreSQL) zu erreichen.
+# Die IP muss zur Docker-Bridge des kind-Netzwerks gehören.
+# Ermitteln via: docker inspect desktop-control-plane --format '{{json .NetworkSettings.Networks}}'
+hostAliases:
+  - ip: "172.19.0.1"
+    hostnames:
+      - "host.docker.internal"
+
 livenessProbe:
   httpGet:
     path: /actuator/health

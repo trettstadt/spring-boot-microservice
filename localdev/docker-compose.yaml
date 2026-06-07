@@ -29,6 +29,8 @@ services:
     image: grafana/otel-lgtm:latest
     pid: "host"
     privileged: true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "3000:3000"     # Grafana
       - "4317:4317"     # OTLP gRPC receiver
@@ -36,6 +38,14 @@ services:
       - "9090:9090"     # Prometheus web UI
       - "3200:3200"     # Tempo
       - "3100:3100"     # Loki
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - ./promtail.yaml:/etc/promtail/config.yaml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - lgtm
 
 volumes:
   postgres_data:
