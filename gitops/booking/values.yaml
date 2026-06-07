@@ -284,16 +284,13 @@ actuator:
       export:
         enabled: true
 
-  # OpenTelemetry export for tracing, logging, and metrics. Set the OTLP
+  # OpenTelemetry export for tracing and metrics. Set the OTLP
   # endpoint to your collector (e.g., Grafana Tempo, Jaeger, SigNoz).
   # Leave endpoint/url empty to disable.
+  # Logs are exported via structured JSON to stdout and picked up
+  # by the OpenTelemetry Collector (filelog receiver).
   opentelemetry:
     tracing:
-      export:
-        otlp:
-          transport: grpc
-          endpoint: ""
-    logging:
       export:
         otlp:
           transport: grpc

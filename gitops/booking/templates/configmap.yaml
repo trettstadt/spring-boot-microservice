@@ -47,11 +47,6 @@ data:
             otlp:
               transport: {{ .Values.actuator.opentelemetry.tracing.export.otlp.transport }}
               endpoint: {{ .Values.actuator.opentelemetry.tracing.export.otlp.endpoint }}
-        logging:
-          export:
-            otlp:
-              transport: {{ .Values.actuator.opentelemetry.logging.export.otlp.transport }}
-              endpoint: {{ .Values.actuator.opentelemetry.logging.export.otlp.endpoint }}
       otlp:
         metrics:
           export:

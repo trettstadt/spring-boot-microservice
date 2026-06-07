@@ -22,11 +22,6 @@ actuator:
         otlp:
           transport: grpc
           endpoint: http://host.docker.internal:4317
-    logging:
-      export:
-        otlp:
-          transport: grpc
-          endpoint: http://host.docker.internal:4317
     metrics:
       export:
         enabled: true
