@@ -1,0 +1,5 @@
+# Shared booking values (prod defaults, overridden per environment)
+image:
+  repository: ghcr.io/trettstadt/spring-boot-microservice
+  pullPolicy: IfNotPresent
+  tag: 824127f49d1f04780d30c073728a7b6ba06396a9

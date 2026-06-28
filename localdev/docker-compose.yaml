@@ -25,27 +25,29 @@ services:
     depends_on:
       - postgres
 
-  lgtm:
-    image: grafana/otel-lgtm:latest
-    pid: "host"
-    privileged: true
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    ports:
-      - "3000:3000"     # Grafana
-      - "4317:4317"     # OTLP gRPC receiver
-      - "4318:4318"     # OTLP HTTP receiver
-      - "9090:9090"     # Prometheus web UI
-      - "3200:3200"     # Tempo
-      - "3100:3100"     # Loki
-
-  promtail:
-    image: grafana/promtail:latest
-    volumes:
-      - ./promtail.yaml:/etc/promtail/config.yaml:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - lgtm
+  # lgtm and promtail are disabled when using Grafana Cloud.
+  # See application-localdev.yaml for OTEL exporter config pointing to Grafana Cloud.
+  # lgtm:
+  #   image: grafana/otel-lgtm:latest
+  #   pid: "host"
+  #   privileged: true
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #   ports:
+  #     - "3000:3000"     # Grafana
+  #     - "4317:4317"     # OTLP gRPC receiver
+  #     - "4318:4318"     # OTLP HTTP receiver
+  #     - "9090:9090"     # Prometheus web UI
+  #     - "3200:3200"     # Tempo
+  #     - "3100:3100"     # Loki
+  # 
+  # promtail:
+  #   image: grafana/promtail:latest
+  #   volumes:
+  #     - ./promtail.yaml:/etc/promtail/config.yaml:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   depends_on:
+  #     - lgtm
 
 volumes:
   postgres_data:

@@ -1,0 +1,7 @@
+name: devops-showcase-k8s
+description: Kubernetes add-ons (cert-manager, Traefik) for the K3s cluster
+runtime: java
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: java

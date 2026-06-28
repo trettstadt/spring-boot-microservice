@@ -25,6 +25,7 @@ data:
                 provider: keycloak
                 client-id: {{ .Values.oauth2.clientId }}
                 client-secret: {{ .Values.oauth2.clientSecret }}
+                authorization-grant-type: client_credentials
             provider:
               keycloak:
                 issuer-uri: {{ .Values.oauth2.issuerUri }}
@@ -41,14 +42,32 @@ data:
         metrics:
           export:
             enabled: {{ .Values.actuator.prometheus.metrics.export.enabled }}
+      {{- $otlp := .Values.actuator.opentelemetry }}
+      {{- if $otlp.tracing.export.otlp.endpoint }}
       opentelemetry:
         tracing:
           export:
             otlp:
-              transport: {{ .Values.actuator.opentelemetry.tracing.export.otlp.transport }}
-              endpoint: {{ .Values.actuator.opentelemetry.tracing.export.otlp.endpoint }}
+              transport: {{ $otlp.tracing.export.otlp.transport }}
+              endpoint: {{ $otlp.tracing.export.otlp.endpoint }}
+              {{- if $otlp.tracing.export.otlp.headers }}
+              headers:
+              {{- $otlp.tracing.export.otlp.headers | toYaml | nindent 16 }}
+              {{- end }}
+        {{- if $otlp.resourceAttributes }}
+        resource-attributes:
+        {{- $otlp.resourceAttributes | toYaml | nindent 10 }}
+        {{- end }}
+      {{- end }}
+      {{- $metricsOtlp := $otlp.metrics.export }}
       otlp:
         metrics:
           export:
-            enabled: {{ .Values.actuator.opentelemetry.metrics.export.enabled }}
-            url: {{ .Values.actuator.opentelemetry.metrics.export.url }}
+            enabled: {{ $metricsOtlp.enabled }}
+            {{- if $metricsOtlp.url }}
+            url: {{ $metricsOtlp.url }}
+            {{- end }}
+            {{- if $metricsOtlp.headers }}
+            headers:
+              {{- $metricsOtlp.headers | toYaml | nindent 14 }}
+            {{- end }}

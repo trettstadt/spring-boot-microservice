@@ -1,0 +1,54 @@
+spring:
+  profiles:
+    active: prod
+database:
+  url: jdbc:postgresql://postgresql.booking.svc.cluster.local:5432/microservicedb
+  username: appuser
+oauth2:
+  issuerUri: https://auth.retdemo.de/auth/realms/master
+  clientId: spring-boot-microservice
+  clientSecret: 1N73bVtOYRUinWUGZ3hEkiwnG04j8Rr9
+actuator:
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          transport: http
+          endpoint: https://otlp-gateway-prod-eu-west-2.grafana.net/otlp/v1/traces
+          headers:
+            Authorization: "Basic ${OTEL_AUTH:MTY5MDcxMTpnbGNfZXlKdklqb2lNVGd4TVRneU9DSXNJbTRpT2lKa1pYWnZjSE10YzJodmQyTmhjMlVpTENKcklqb2lRVEZpTmpKeU5IVm9kemt3V0dOS00wbzNVWFJGTURGaklpd2liU0k2ZXlKeUlqb2ljSEp2WkMxbGRTMTNaWE4wTFRJaWZYMD0=}"
+    metrics:
+      export:
+        enabled: true
+        url: https://otlp-gateway-prod-eu-west-2.grafana.net/otlp/v1/metrics
+        headers:
+          Authorization: "Basic ${OTEL_AUTH:MTY5MDcxMTpnbGNfZXlKdklqb2lNVGd4TVRneU9DSXNJbTRpT2lKa1pYWnZjSE10YzJodmQyTmhjMlVpTENKcklqb2lRVEZpTmpKeU5IVm9kemt3V0dOS00wbzNVWFJGTURGaklpd2liU0k2ZXlKeUlqb2ljSEp2WkMxbGRTMTNaWE4wTFRJaWZYMD0=}"
+    resourceAttributes:
+      service.namespace: devops-showcase
+      deployment.environment: demo
+externalSecrets:
+  enabled: true
+  store:
+    spec:
+      provider:
+        fake:
+          data:
+            - key: /secret/database
+              value: '{"password":"apppassword"}'
+service:
+  type: ClusterIP
+  port: 8080
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: booking.retdemo.de
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: booking-tls
+      hosts:
+        - booking.retdemo.de

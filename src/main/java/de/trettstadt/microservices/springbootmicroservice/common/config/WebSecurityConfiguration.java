@@ -39,7 +39,8 @@ public class WebSecurityConfiguration {
         )
         .oauth2ResourceServer(oauth2 -> oauth2
             .jwt(withDefaults())
-        );
+        )
+        .oauth2Client(withDefaults());
     return http.build();
   }
 }

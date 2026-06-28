@@ -1,16 +1,13 @@
 spring:
   profiles:
     active: ""
-
 database:
   url: jdbc:postgresql://host.docker.internal:5433/microservicedb
   username: appuser
-
 oauth2:
   issuerUri: http://host.docker.internal:8180/realms/master
   clientId: rooms
   clientSecret: secret
-
 actuator:
   prometheus:
     metrics:
@@ -26,7 +23,6 @@ actuator:
       export:
         enabled: true
         url: http://host.docker.internal:4318/v1/metrics
-
 externalSecrets:
   enabled: true
   store:
@@ -40,7 +36,6 @@ externalSecrets:
     remoteRef:
       key: /secret/database
       property: password
-
 resources:
   limits:
     cpu: 1
@@ -50,15 +45,10 @@ resources:
     memory: 1Gi
 service:
   port: 8080
-
-# Ermöglicht K8s-Pods, den Docker-Host (Keycloak, PostgreSQL) zu erreichen.
-# Die IP muss zur Docker-Bridge des kind-Netzwerks gehören.
-# Ermitteln via: docker inspect desktop-control-plane --format '{{json .NetworkSettings.Networks}}'
 hostAliases:
   - ip: "172.19.0.1"
     hostnames:
       - "host.docker.internal"
-
 livenessProbe:
   httpGet:
     path: /actuator/health
@@ -67,7 +57,6 @@ readinessProbe:
   httpGet:
     path: /actuator/health
     port: http
-
 image:
   repository: ghcr.io/trettstadt/spring-boot-microservice
   tag: 007deca4df0a631a36190b87715486d7171e0563

@@ -1,0 +1,2 @@
+config:
+  devops-showcase-k8s:infraStackName: tobias-rettstadt-de/devops-showcase/devops-showcase

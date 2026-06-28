@@ -1,0 +1,35 @@
+image:
+  tag: 26.6.2
+args:
+  - start
+extraEnv: |
+  - name: KC_BOOTSTRAP_ADMIN_USERNAME
+    value: admin
+  - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+    value: admin
+  - name: KC_HOSTNAME
+    value: auth.retdemo.de
+  - name: KC_DB
+    value: postgres
+  - name: KC_DB_URL
+    value: jdbc:postgresql://postgresql.booking.svc.cluster.local:5432/keycloak
+  - name: KC_DB_USERNAME
+    value: keycloak
+  - name: KC_DB_PASSWORD
+    value: keycloak
+proxy:
+  enabled: true
+  mode: xforwarded
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  rules:
+    - host: auth.retdemo.de
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - auth.retdemo.de
+      secretName: keycloak-tls

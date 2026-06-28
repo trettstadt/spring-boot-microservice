@@ -73,6 +73,9 @@ spec:
           env:
             - name: SPRING_CONFIG_IMPORT
               value: "optional:file:/etc/config/application.yaml"
+          {{- with .Values.extraEnv }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}

@@ -1,0 +1,66 @@
+---
+- name: Prepare Nodes for K3s
+  hosts: k3s_cluster
+  gather_facts: yes
+  tasks:
+    - name: Update apt cache and upgrade packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+        cache_valid_time: 3600
+
+- name: Bootstrap K3s Master (Control Plane)
+  hosts: master
+  tasks:
+    - name: Download and Install K3s Server
+      shell: |
+        curl -sfL https://get.k3s.io | sh -s - \
+          --disable traefik \
+          --disable metrics-server \
+          --node-name k3s-master \
+          --node-ip=10.0.1.10 \
+          --tls-san={{ ansible_host }} \
+          --flannel-iface=enp7s0
+      args:
+        creates: /usr/local/bin/k3s-server-uninstall.sh
+
+    - name: Read Node Token from Master
+      slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: node_token_encoded
+
+    - name: Store Token as a Fact
+      set_fact:
+        k3s_token: "{{ node_token_encoded['content'] | b64decode | trim }}"
+
+- name: Bootstrap K3s Worker Agent
+  hosts: workers
+  tasks:
+    - name: Pass K3s Token from Master to Worker
+      set_fact:
+        k3s_token: "{{ hostvars[groups['master'][0]]['k3s_token'] }}"
+        master_ip: "{{ hostvars[groups['master'][0]]['ansible_host'] }}"
+
+    - name: Download and Install K3s Agent
+      shell: |
+        curl -sfL https://get.k3s.io | K3S_URL="https://10.0.1.10:6443" K3S_TOKEN="{{ k3s_token }}" sh -s - \
+          --node-name k3s-worker \
+          --node-ip=10.0.1.11 \
+          --flannel-iface=enp7s0
+      args:
+        creates: /usr/local/bin/k3s-agent-uninstall.sh
+
+- name: Configure Local Kubeconfig
+  hosts: master
+  tasks:
+    - name: Read Kubeconfig from Master
+      slurp:
+        src: /etc/rancher/k3s/k3s.yaml
+      register: kubeconfig_encoded
+
+    - name: Write and Adjust Kubeconfig Locally
+      delegate_to: localhost
+      copy:
+        content: "{{ kubeconfig_encoded['content'] | b64decode | replace('127.0.0.1', ansible_host) }}"
+        dest: "{{ lookup('env', 'HOME') }}/.kube/config-k3s-demo"
+        mode: '0600'

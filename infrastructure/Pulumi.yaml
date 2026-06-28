@@ -1,0 +1,7 @@
+name: devops-showcase
+description: Infrastructure as code for a small and cost-effective deployment
+runtime: java
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: java

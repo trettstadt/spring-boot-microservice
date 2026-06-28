@@ -257,6 +257,10 @@ externalSecrets:
       # -- Property within the value (e.g. JSON key "password").
       property: password
 
+# -- Additional environment variables for the pod (e.g., OTEL_AUTH).
+# Set to inject environment variables not covered by other values.
+extraEnv: []
+
 # SECTION: Application configuration
 
 # Spring profile to activate. Leave empty to rely on the SPRING_PROFILES_ACTIVE env var.
@@ -295,10 +299,17 @@ actuator:
         otlp:
           transport: grpc
           endpoint: ""
+          # headers:
+          #   Authorization: "Basic ${OTEL_AUTH:default}"
     metrics:
       export:
         enabled: true
         url: ""
+        # headers:
+        #   Authorization: "Basic ${OTEL_AUTH:default}"
+    # resource-attributes:
+    #   service.namespace: devops-showcase
+    #   deployment.environment: demo
 
 # PodDisruptionBudget ensures minimum availability during voluntary disruptions
 # (node drains, cluster upgrades). Enable in production with replicaCount > 1.

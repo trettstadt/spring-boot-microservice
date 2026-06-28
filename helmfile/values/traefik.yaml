@@ -1,0 +1,16 @@
+service:
+  type: LoadBalancer
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+ports:
+  web:
+    redirections:
+      entryPoint:
+        to: websecure
+        scheme: https
+        permanent: true
+providers:
+  kubernetesIngress:
+    publishedService:
+      enabled: true

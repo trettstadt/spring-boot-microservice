@@ -27,5 +27,22 @@ management:
     tracing:
       export:
         otlp:
-          transport: grpc
-          endpoint: http://localhost:4317
+          transport: http
+          endpoint: https://otlp-gateway-prod-eu-west-2.grafana.net/otlp/v1/traces
+          headers:
+            Authorization: "Basic ${OTEL_AUTH:MTY5MDcxMTpnbGNfZXlKdklqb2lNVGd4TVRneU9DSXNJbTRpT2lKa1pYWnZjSE10YzJodmQyTmhjMlVpTENKcklqb2lRVEZpTmpKeU5IVm9kemt3V0dOS00wbzNVWFJGTURGaklpd2liU0k2ZXlKeUlqb2ljSEp2WkMxbGRTMTNaWE4wTFRJaWZYMD0=}"
+    resource-attributes:
+      "service.namespace": devops-showcase
+      "deployment.environment": demo
+  otlp:
+    metrics:
+      export:
+        enabled: true
+        url: https://otlp-gateway-prod-eu-west-2.grafana.net/otlp/v1/metrics
+        headers:
+          Authorization: "Basic ${OTEL_AUTH:MTY5MDcxMTpnbGNfZXlKdklqb2lNVGd4TVRneU9DSXNJbTRpT2lKa1pYWnZjSE10YzJodmQyTmhjMlVpTENKcklqb2lRVEZpTmpKeU5IVm9kemt3V0dOS00wbzNVWFJGTURGaklpd2liU0k2ZXlKeUlqb2ljSEp2WkMxbGRTMTNaWE4wTFRJaWZYMD0=}"
+  # Enable Prometheus scraping only if needed alongside OTLP metrics
+  # prometheus:
+  #   metrics:
+  #     export:
+  #       enabled: true
